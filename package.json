@@ -1,0 +1,40 @@
+{
+  "name": "@corpsemedia/muses",
+  "version": "0.2.4",
+  "description": "🎛️ JavaScript Audio Mixing Console Module 🔊",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "test": "node test.mjs",
+    "build": "npx tsc",
+    "dist": "browserify src/index.ts -p [ tsify ] > dist/muses.js && npx minify ./dist/muses.js > ./dist/muses.min.js",
+    "docs": "npx typedoc src/index.ts --name Muses"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/corpsemedia/muses.git"
+  },
+  "keywords": [
+    "audio",
+    "mix",
+    "sound",
+    "es6"
+  ],
+  "author": "Angel Rodriguez <xangelrodriguez99@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/corpsemedia/muses/issues"
+  },
+  "homepage": "https://github.com/corpsemedia/muses#readme",
+  "devDependencies": {
+    "minify": "^8.0.3",
+    "tsify": "^5.0.4",
+    "typedoc": "^0.22.10",
+    "typedoc-twilio-theme": "^1.0.1",
+    "typescript": "^4.5.4"
+  },
+  "dependencies": {
+    "@types/audio-context": "^1.0.1",
+    "audio-context": "^1.0.3"
+  }
+}

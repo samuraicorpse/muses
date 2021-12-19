@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Muses MixingConsole Test</title>
+  <script src="./dist/muses.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+</head>
+<style>
+body {
+  margin : 24px ;
+} #channels > .wrapper, #tracks > .wrapper {
+  display : flex ;
+  flex-direction : row ;
+  align-items : flex-start ;
+  flex-wrap : wrap ;
+} #channels > .button, #tracks > .button {
+  margin-bottom : 12px ;
+} .channel, .track {
+  width : 320px ;
+  box-shadow : 0px 6px 12px rgba( 0, 0, 0, 0.32 ) ;
+  padding : 24px ;
+  border-radius : 5px ;
+  margin-right : 24px ;
+  margin-bottom : 24px ;
+} .channel > p > input, .track > p > input {
+  display : inline-block ;
+  vertical-align : middle ;
+  width : 100% ;
+}
+</style>
+<body>
+  <div id="app">
+    <h1 class="title is-1">Muses Test</h1>
+    <p>
+      Load an audio file to add a new track, play it and change the controls of each channel.
+    </p>
+    <p>
+      <input id="upload" accept="audio/*" type="file">
+    </p>
+    <hr></hr>
+    <h2 class="title is-2">
+      Tracks
+    </h2>
+    <div id="tracks">
+      <div class="wrapper">
+        <div class="track" v-for="( track, i ) in tracks" :key="`track-${ i }`">
+          <div class="title is-5">
+            Track #{{ i }}
+          </div>
+          <div class="columns">
+            <div class="column">
+              <button :class="`button ${ track.trackInstance.playing === true  ? 'is-dark' : '' }`" @click="track.trackInstance.play()">Play</button>
+              <button :class="`button ${ track.trackInstance.playing === false ? 'is-dark' : '' }`" @click="track.trackInstance.stop()">Stop</button>
+            </div>
+          </div>
+          <div class="columns">
+            <div class="column">
+              <input class="input" type="text" v-model="track.channelId"/>
+            </div>
+            <div class="column">
+              <button class="button is-link is-fullwidth" @click="connectToChannel( track )">Set Channel</button>
+            </div>
+          </div>
+          <p>
+            <label>Volume</label>
+            <input type="range" min="0" max="1" v-model="track.trackInstance.volume" step="0.01"/>
+          </p>
+          <div>
+            <label>Loop</label>
+            <input type="checkbox" v-model="track.trackInstance.loop"/>
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr></hr>
+    <h2 class="title is-2">
+      Channels
+    </h2>
+    <div id="channels">
+      <button class="button" @click="addChannel">Add Channel</button>
+      <div class="wrapper">
+        <div class="channel" v-for="( channel, i ) in channels" :key="`channel-${ i }`">
+          <div class="title is-5">
+            channel #{{ channel.id }}
+          </div>
+          <p>
+            <label>Volume</label>
+            <input type="range" min="0" max="1" v-model="channel.volume" step="0.01"/>
+          </p>
+          <p>
+            <label>Panning</label>
+            <input type="range" min="-1" max="1" v-model="channel.pan" step="0.01"/>
+          </p>
+          <p>
+            <label>Low</label>
+            <input type="range" min="-40" max="36" v-model="channel.lowEQ"/>
+          </p>
+          <p>
+            <label>Mid</label>
+            <input type="range" min="-40" max="36" v-model="channel.midEQ"/>
+          </p>
+          <p>
+            <label>High</label>
+            <input type="range" min="-40" max="36" v-model="channel.highEQ"/>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+<script>
+  const mix = new muses.MixingConsole( ) ;
+
+  // VUE APP [v] ;
+  const App = new Vue( {
+    el : '#app' ,
+    data( ) {
+      // add at least one channel [v] ;
+      return {
+        tracks : [ ] ,
+        channels : [
+          mix.addChannel( "main" )
+        ]
+      }
+    } ,
+    methods : {
+      // let's add audio to an channel
+      addAudioFile( src ) {
+        const obj = {
+          channelId : "main" ,
+          previousChannel : "main" ,
+          trackInstance : new muses.AudioTrack( src, mix.ctx )
+        } ;
+        this.connectToChannel( obj ) ;
+        return this.tracks.push( obj ) ;
+      } ,
+      connectToChannel( track ) {
+        const i = this.channels.findIndex( ( c ) => c.id == track.channelId ) ;
+        if( i === -1 ) { 
+          track.channelId = track.previousChannel ;
+          return alert( "Error: The channel \"" + track.channelId + "\" doesn\'t exists." ) ; 
+        } // set [v] ;
+        this.channels[ i ].input( track.trackInstance ) ;
+        track.previousChannel = track.channelId ;
+      } ,
+      addChannel( ) {
+        this.channels.push( mix.addChannel( ) ) ;
+        return this.$forceUpdate( ) ;
+      }
+    } ,
+    mounted( ) {
+      // get input files on "app-ready" event (vue) [v] ;
+      // (AudioContext) createMediaElementSource doesn't works with file:/// protocol, so let's make a base64 src.
+      document.querySelector( "#upload" ).addEventListener( "change", function( ) {
+        fr = new FileReader( ) ;
+        fr.readAsDataURL( document.getElementById( "upload" ).files[ 0 ] ) ;
+        fr.onload = ( e ) => {
+          console.log( "Audio loaded, adding it into the vue-app..." ) ;
+          return App.addAudioFile( e.target.result ) ;
+        } ;
+      } ) ;
+    }
+  } )
+</script>
+</html>
