@@ -41,6 +41,12 @@ body {
     <p>
       <input id="upload" accept="audio/*" type="file">
     </p>
+    <div class="columns">
+      <div class="column">
+        <label>Mixer Volume (Output)</label>
+        <input style="vertical-align: middle;" type="range" min="0" max="1" v-model="mixer.volume" step="0.01"/>
+      </div>
+    </div>
     <hr></hr>
     <h2 class="title is-2">
       Tracks
@@ -113,7 +119,7 @@ body {
   </div>
 </body>
 <script>
-  const mix = new muses.MixingConsole( ) ;
+  const mix = new muses.AudioMixer( ) ;
 
   // VUE APP [v] ;
   const App = new Vue( {
@@ -121,6 +127,7 @@ body {
     data( ) {
       // add at least one channel [v] ;
       return {
+        mixer : mix ,
         tracks : [ ] ,
         channels : [
           mix.addChannel( "main" )
