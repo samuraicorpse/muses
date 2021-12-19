@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/corpsemedia/muses#readme",
   "devDependencies": {
+    "md-toc-cli": "^2.0.0",
     "minify": "^8.0.3",
     "tsify": "^5.0.4",
     "typedoc": "^0.22.10",

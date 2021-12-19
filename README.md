@@ -1,11 +1,13 @@
+<h1 align="center">Muses</h1>
+
 <p align="center">
-  <h1>Muses</h1>
+<img src="https://img.shields.io/badge/Typescript-^4.5.4-blue?logo=typescript"/>
+<img src="https://img.shields.io/badge/Webpack-Yes-8DD6F9?logo=webpack"/>
 
-  ![typescript support](https://img.shields.io/badge/Typescript-^4.5.4-blue?logo=typescript)
-  ![webpack support](https://img.shields.io/badge/Webpack-Yes-8DD6F9?logo=webpack)
-
-  Create a virtual *mixing console* to take control over your audio sources by adding channels to group all them to manage all the **audio-signals**.
+Create a virtual *mixing console* to take control over your audio sources by adding channels to group all them to manage all the **audio-signals**.
 </p>
+
+***
 
 ## Support
 
