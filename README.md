@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="./thumbnail.jpg" style="max-height : 256px"/>
+</p>
+
 <h1 align="center">Muses</h1>
 
 <p align="center">
