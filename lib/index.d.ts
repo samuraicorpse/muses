@@ -10,7 +10,7 @@ export declare class AudioMixer {
     /** All channels added to the current AudioMixer instance */
     channels: AudioChannel[];
     /** The node to control the mixer output volume */
-    gainNode: GainNode;
+    inputNode: GainNode;
     /**
      * Create a new AudioMixer instance.
      * @param {AudioContext} [audioContext] - A custom audio-context to connect the audio-mixer output signal. By default, muses will add a new AudioContext.
@@ -65,6 +65,7 @@ export declare function createAudioMixer(context?: AudioContext): AudioMixer;
 export declare class AudioChannel {
     inputNode: GainNode;
     outputNode: GainNode;
+    /** All the AudioTracks added to the current channel. **WARNING:** Other sources (like manual stream-source additions) will be not showed in this array, only *AudioTrack* instances added through *input()* method. */
     tracks: AudioTrack[];
     gainNode: GainNode;
     LowEQNode: BiquadFilterNode;
@@ -72,6 +73,7 @@ export declare class AudioChannel {
     HighEQNode: BiquadFilterNode;
     stereoPannerNode: StereoPannerNode;
     private mixer;
+    private customNodes;
     /** The current channel id provided from AudioMixer instance */
     id: string;
     /**
@@ -94,6 +96,25 @@ export declare class AudioChannel {
      * ```
      */
     constructor(mixingConsole: AudioMixer);
+    /**
+     * Add a custom node or effect to the channel (in-order).
+     * @param {AudioNode} customNode - The effect or audio node to connect between the channelOutputNode nad the mixerInputNode.
+     */
+    addNode(customNode: AudioNode): void;
+    /**
+     * Remove an specific customNode from the channel's customNodes list and then reconnect all nodes.
+     * @param {AudioNode} node - The previously added effect or audio node.
+     */
+    removeNode(node: AudioNode): void;
+    /**
+     * Remove all custom nodes from the channel and then reconnect the channel-output with the mixer-input.
+     */
+    removeAllNodes(): void;
+    /**
+     * Reconnect all custom nodes if you have added them previously (outputNode -> customNodes -> mixerInputNode).
+     * If you don't have custom nodes added, this method will ensure the connection between the **channelOutputNode** and the **mixerInputNode**.
+     */
+    reconnectNodes(): void;
     /**
      * Disconnect from the audio-context component used in the current channel's mixing-console.
      * @returns {AudioChannel} The current audio-channel instance.
@@ -121,8 +142,11 @@ export declare class AudioChannel {
      * @returns {AudioChannel} - The current audio-channel instance.
      */
     addTrack(track: AudioTrack): AudioChannel;
-    /** Add a new audio input from an audio-element or create it from an URL<string> */
-    input(source: HTMLAudioElement | String | AudioTrack): AudioTrack;
+    /**
+     * Add a new audio input from an audio-element, stream-source, media-source or create a new element by loading a file from a provided URL<string>
+     * @param {MediaStreamAudioSourceNode|MediaElementAudioSourceNode|HTMLAudioElement|String|AudioTrack} source - An audio-element to create a new *AudioTrack* instance, an URL of the file to create that element automatically (Base64 supported) or the audio-node to connect directly into channel's *inputNode*
+     */
+    input(source: MediaStreamAudioSourceNode | MediaElementAudioSourceNode | HTMLAudioElement | String | AudioTrack): AudioNode | AudioTrack;
     /** Modify the Panning Effect (-1 Left, 1 Right, 0 Center) */
     set pan(value: number);
     /** Get the current Panning Effect value */
@@ -217,4 +241,31 @@ export declare class AudioTrack {
     /** Pause the current audio track and set time to 0, playing audio from the start again with play() method. */
     stop(): number;
 }
+/**
+ * Request the microphone audio-stream to connect with a mixer's channel.
+ * **This method will request the user permission automatically.**
+ * @returns {MediaStreamAudioSourceNode} - The final audio-node to connect with a mixer's channel.
+ * @example <caption>Promise Based</caption>
+ * ```javascript
+ * muses
+ *   .getMicStreamNode( )
+ *   .then( streamNode => {
+ *     channel.input( streamNode ) ;
+ *   } )
+ *   .catch( err => {
+ *     console.error( "GET_MIC_STREAM_ERROR ~>", err ) ;
+ *   } ) ;
+ * ```
+ * @example <caption>Async Call</caption>
+ * ```javascript
+ * const micNode = await muses.getMicStreamNode( ) ;
+ * channel.input( micNode ) ;
+ * ```
+ */
+export declare function getMicStreamNode(): Promise<MediaStreamAudioSourceNode>;
+/**
+ * Get an audio-context instance.
+ * @returns {AudioContext}
+ */
+export declare function getAudioContext(): AudioContext;
 //# sourceMappingURL=index.d.ts.map

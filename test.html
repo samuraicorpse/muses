@@ -47,6 +47,20 @@ body {
         <input style="vertical-align: middle;" type="range" min="0" max="1" v-model="mixer.volume" step="0.01"/>
       </div>
     </div>
+    <div class="columns" style="max-width : 400px ;">
+      <div class="column">
+        <div v-if="!mic" class="button is-link is-fullwidth" @click="requestMic">Request Microphone</div>
+        <div v-else class="button is-dark is-fullwidth">Microphone Connected to Main-Channel</div>
+      </div>
+      <div class="column">
+        <div v-if="!custom1" class="button is-link is-fullwidth" @click="addCustom1Node">Add CustomNode (-40% volume in main)</div>
+        <div v-else class="button is-dark is-fullwidth" @click="removeCustom1Node">Remove CustomNode (main)</div>
+      </div>
+      <div class="column">
+        <div v-if="!custom2" class="button is-link is-fullwidth" @click="addCustom2Node">Add CustomNode (-40% volume in main)</div>
+        <div v-else class="button is-dark is-fullwidth" @click="removeCustom2Node">Remove CustomNode (main)</div>
+      </div>
+    </div>
     <hr></hr>
     <h2 class="title is-2">
       Tracks
@@ -127,6 +141,9 @@ body {
     data( ) {
       // add at least one channel [v] ;
       return {
+        mic : false ,
+        custom1 : false ,
+        custom2 : false ,
         mixer : mix ,
         tracks : [ ] ,
         channels : [
@@ -145,6 +162,19 @@ body {
         this.connectToChannel( obj ) ;
         return this.tracks.push( obj ) ;
       } ,
+      requestMic( ) {
+        const $app = this ;
+        muses
+          .getMicStreamNode( )
+          .then( streamNode => {
+            console.log( "MIC_LOADED", streamNode ) ;
+            $app.channels[ 0 ].input( streamNode ) ;
+            $app.mic = true ;
+          } )
+          .catch( err => {
+            console.error( "GET_MIC_STREAM_ERROR ~>", err ) ;
+          } ) ;
+      } ,
       connectToChannel( track ) {
         const i = this.channels.findIndex( ( c ) => c.id == track.channelId ) ;
         if( i === -1 ) { 
@@ -157,7 +187,27 @@ body {
       addChannel( ) {
         this.channels.push( mix.addChannel( ) ) ;
         return this.$forceUpdate( ) ;
-      }
+      } ,
+      addCustom1Node( ) {
+        const gainNode = mix.ctx.createGain( ) ;
+        gainNode.gain.value = 0.4 ; 
+        this.channels[ 0 ].addNode( gainNode ) ;
+        this.custom1 = gainNode ;
+      } ,
+      addCustom2Node( ) {
+        const gainNode = mix.ctx.createGain( ) ;
+        gainNode.gain.value = 0.4 ; 
+        this.channels[ 0 ].addNode( gainNode ) ;
+        this.custom2 = gainNode ;
+      } , 
+      removeCustom1Node( ) {
+        this.channels[ 0 ].removeNode( this.custom1 ) ;
+        this.custom1 = false ;
+      } ,
+      removeCustom2Node( ) {
+        this.channels[ 0 ].removeNode( this.custom2 ) ;
+        this.custom2 = false ;
+      } 
     } ,
     mounted( ) {
       // get input files on "app-ready" event (vue) [v] ;

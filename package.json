@@ -8,7 +8,8 @@
     "test": "node test.mjs",
     "build": "npx tsc",
     "dist": "browserify src/index.ts -p [ tsify ] > dist/muses.js && npx minify ./dist/muses.js > ./dist/muses.min.js",
-    "docs": "npx typedoc src/index.ts --name Muses --readme ./README.md"
+    "toc" : "npx markdown-toc README.md" ,
+    "docs": "npx typedoc src/index.ts --name \"Muses - Audio Mixing Module\" --readme ./README.md"
   },
   "repository": {
     "type": "git",
@@ -27,6 +28,7 @@
   },
   "homepage": "https://github.com/corpsemedia/muses#readme",
   "devDependencies": {
+    "markdown-toc": "^1.2.0",
     "md-toc-cli": "^2.0.0",
     "minify": "^8.0.3",
     "tsify": "^5.0.4",

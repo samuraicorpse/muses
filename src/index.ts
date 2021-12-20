@@ -11,7 +11,7 @@ export class AudioMixer {
   /** All channels added to the current AudioMixer instance */
   channels : AudioChannel[ ] = [ ] ;
   /** The node to control the mixer output volume */
-  gainNode : GainNode ;
+  inputNode : GainNode ;
 
   /**
    * Create a new AudioMixer instance.
@@ -28,8 +28,8 @@ export class AudioMixer {
    */
   constructor( audioContext? : AudioContext ) {
     this.ctx = audioContext || <AudioContext>AudioContext( ) ;
-    this.gainNode = this.ctx.createGain( ) ;
-    this.gainNode.connect( this.ctx.destination ) ;
+    this.inputNode = this.ctx.createGain( ) ;
+    this.inputNode.connect( this.ctx.destination ) ;
   }
 
   /**
@@ -54,12 +54,12 @@ export class AudioMixer {
 
   /** Modify the volume of the current mixer (from 0 to 1) */
   set volume( value : number ) {
-    this.gainNode.gain.value = value ;
+    this.inputNode.gain.value = value ;
   }
 
   /** Get the current volume value of the mixer */
   get volume( ) : number {
-    return this.gainNode.gain.value ;
+    return this.inputNode.gain.value ;
   }
 } ;
 
@@ -94,13 +94,15 @@ export function createAudioMixer( context? : AudioContext ) : AudioMixer {
 export class AudioChannel {
   inputNode  : GainNode ;
   outputNode : GainNode ;
-  tracks : AudioTrack[ ] = [ ] ;
+  /** All the AudioTracks added to the current channel. **WARNING:** Other sources (like manual stream-source additions) will be not showed in this array, only *AudioTrack* instances added through *input()* method. */
+  tracks : AudioTrack[] = [ ] ;
   gainNode   : GainNode ;
   LowEQNode  : BiquadFilterNode ;
   MidEQNode  : BiquadFilterNode ;
   HighEQNode : BiquadFilterNode ;
   stereoPannerNode : StereoPannerNode ;
   private mixer  : AudioMixer ;
+  private customNodes : AudioNode[] = [ ] ;
 
   /** The current channel id provided from AudioMixer instance */
   id : string = "N/A" ;
@@ -142,7 +144,63 @@ export class AudioChannel {
       .connect( this.stereoPannerNode )
       .connect( this.gainNode   )
       .connect( this.outputNode )
-      .connect( mixingConsole.gainNode ) ;
+      .connect( mixingConsole.inputNode ) ;
+  }
+
+  /**
+   * Add a custom node or effect to the channel (in-order).
+   * @param {AudioNode} customNode - The effect or audio node to connect between the channelOutputNode nad the mixerInputNode.
+   */
+  addNode( customNode : AudioNode ) {
+    this.customNodes.push( customNode ) ;
+    this.reconnectNodes( ) ;
+  }
+
+  /**
+   * Remove an specific customNode from the channel's customNodes list and then reconnect all nodes.
+   * @param {AudioNode} node - The previously added effect or audio node.
+   */
+  removeNode( node : AudioNode ) {
+    const i = this.customNodes.findIndex( n => n === node ) ;
+    if( i === -1 ) { throw new Error( "Can\'t find out the provided customNode in the channel's customNodes list." ) ; }
+    this.customNodes.splice( i, 1 ) ;
+    this.reconnectNodes( ) ;
+  }
+
+  /**
+   * Remove all custom nodes from the channel and then reconnect the channel-output with the mixer-input.
+   */
+  removeAllNodes( ) {
+    this.customNodes.splice( 0, this.customNodes.length ) ;
+    this.reconnectNodes( ) ;
+  }
+  
+  /**
+   * Reconnect all custom nodes if you have added them previously (outputNode -> customNodes -> mixerInputNode).
+   * If you don't have custom nodes added, this method will ensure the connection between the **channelOutputNode** and the **mixerInputNode**.
+   */
+  reconnectNodes( ) {
+    this.volume = 0 ;
+    this.outputNode.disconnect( ) ;
+    try {
+      if( this.customNodes.length <= 0 ) {
+        this.outputNode.connect( this.mixer.inputNode ) ;
+      } else {
+        const size = this.customNodes.length ;
+        for( var i = 0 ; i < size ; i++ ) {
+          this.customNodes[ i ].disconnect( ) ;
+          this.customNodes[ i ].connect( i >= ( size - 1 ) ? this.mixer.inputNode : this.customNodes[ i + 1 ] ) ;
+        } // connect first node [v] ;
+        this.outputNode.connect( this.customNodes[ 0 ] ) ;
+      }
+    } catch( ex ) {
+      console.error( "CHANNEL_RECONNECT:NODES_eRROR ~>", ex ) ;
+      this.outputNode.disconnect( ) ;
+      this.outputNode.connect( this.mixer.inputNode ) ;
+      throw ex ;
+    } finally {
+      this.volume = 1 ;
+    }
   }
 
   /**
@@ -195,8 +253,13 @@ export class AudioChannel {
     return this ;
   }
 
-  /** Add a new audio input from an audio-element or create it from an URL<string> */
-  input( source : HTMLAudioElement | String | AudioTrack ) : AudioTrack {
+  /**
+   * Add a new audio input from an audio-element, stream-source, media-source or create a new element by loading a file from a provided URL<string>
+   * @param {MediaStreamAudioSourceNode|MediaElementAudioSourceNode|HTMLAudioElement|String|AudioTrack} source - An audio-element to create a new *AudioTrack* instance, an URL of the file to create that element automatically (Base64 supported) or the audio-node to connect directly into channel's *inputNode*
+   */
+  input( source : MediaStreamAudioSourceNode | MediaElementAudioSourceNode | HTMLAudioElement | String | AudioTrack ) {
+    if( source instanceof MediaStreamAudioSourceNode || source instanceof MediaElementAudioSourceNode ) 
+      { return source.connect( this.inputNode ) ; }
     if( source instanceof AudioTrack ) { this.addTrack( source ) ; return source ; }
     const track = new AudioTrack( source, this.mixer.ctx ) ;
     this.addTrack( track ) ;
@@ -427,7 +490,53 @@ export class AudioTrack {
   }
 } ;
 
+// MIC STREAM [v] ;
+/**
+ * Request the microphone audio-stream to connect with a mixer's channel.
+ * **This method will request the user permission automatically.**
+ * @returns {MediaStreamAudioSourceNode} - The final audio-node to connect with a mixer's channel.
+ * @example <caption>Promise Based</caption>
+ * ```javascript
+ * muses
+ *   .getMicStreamNode( )
+ *   .then( streamNode => {
+ *     channel.input( streamNode ) ;
+ *   } )
+ *   .catch( err => {
+ *     console.error( "GET_MIC_STREAM_ERROR ~>", err ) ;
+ *   } ) ;
+ * ```
+ * @example <caption>Async Call</caption>
+ * ```javascript
+ * const micNode = await muses.getMicStreamNode( ) ;
+ * channel.input( micNode ) ;
+ * ```
+ */
+export function getMicStreamNode( ) : Promise<MediaStreamAudioSourceNode> {
+  return new Promise( ( res, rej ) => {
+    navigator
+      .mediaDevices
+      .getUserMedia( { video : false, audio : true } )
+      .then( function( stream : MediaStream ) {
+        const ctx : AudioContext = <AudioContext>AudioContext( ) ;
+        const micNode = ctx.createMediaStreamSource( stream ) ;
+        return res( micNode ) ;
+      } )
+      .catch( err => {
+        rej( err ) ;
+      } ) ;
+  } ) ;
+}
+
+/**
+ * Get an audio-context instance.
+ * @returns {AudioContext}
+ */
+export function getAudioContext( ) : AudioContext {
+  return <AudioContext>AudioContext( ) ;
+}
+
 // EXPORT [v] ;
 if( typeof window === "object" ) {
-  window.muses = { AudioMixer, AudioChannel, AudioTrack } ;
+  window.muses = { AudioMixer, AudioChannel, AudioTrack, createAudioMixer, getMicStreamNode, getAudioContext } ;
 }
