@@ -12,7 +12,7 @@
 <img src="https://img.shields.io/npm/dm/@corpsemedia/muses"/>
 <img src="https://img.shields.io/librariesio/release/npm/@corpsemedia/muses"/>
 <img src="https://img.shields.io/librariesio/dependent-repos/npm/@corpsemedia/muses"/>
-<img src="https://img.shields.io/github/last-commit/corpsemedia/muses"/>
+<!--img src="https://img.shields.io/github/last-commit/corpsemedia/muses"/-->
 </p>
 
 <p align="center">
