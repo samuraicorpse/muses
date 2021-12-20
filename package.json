@@ -19,7 +19,11 @@
     "audio",
     "mix",
     "sound",
-    "es6"
+    "es6",
+    "audio-context",
+    "audio-nodes",
+    "audio-mixer",
+    "audio-channels"
   ],
   "author": "Angel Rodriguez <xangelrodriguez99@gmail.com>",
   "license": "MIT",
