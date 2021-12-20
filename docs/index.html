@@ -5,8 +5,6 @@
 <img src="https://img.shields.io/badge/CommonJS-Supported-F7DF1E"/>
 <!--img src="https://img.shields.io/node/v/@corpsemedia/muses"/-->
 <img src="https://img.shields.io/badge/Typescript->=4.5.4-blue?logo=typescript"/>
-<img src="https://img.shields.io/badge/Webpack->=5.65.0-8DD6F9?logo=webpack"/>
-<img src="https://img.shields.io/badge/Vue->=2.x-4FC08D?logo=vue.js"/>
 <img src="https://packagephobia.com/badge?p=@corpsemedia/muses"/>
 <img src="https://badge.fury.io/js/@corpsemedia%2Fmuses.svg"/>
 <img src="https://img.shields.io/npm/dm/@corpsemedia/muses"/>
