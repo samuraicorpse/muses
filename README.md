@@ -3,13 +3,13 @@
 <p align="center">
 <img src="https://img.shields.io/badge/ES6-Supported-F7DF1E"/>
 <img src="https://img.shields.io/badge/CommonJS-Supported-F7DF1E"/>
-<!--img src="https://img.shields.io/node/v/@corpsemedia/muses"/-->
-<img src="https://img.shields.io/badge/Typescript->=4.5.4-blue?logo=typescript"/>
-<img src="https://packagephobia.com/badge?p=@corpsemedia/muses"/>
-<img src="https://badge.fury.io/js/@corpsemedia%2Fmuses.svg"/>
-<img src="https://img.shields.io/npm/dm/@corpsemedia/muses"/>
-<img src="https://img.shields.io/librariesio/release/npm/@corpsemedia/muses"/>
-<!--img src="https://img.shields.io/librariesio/dependent-repos/npm/@corpsemedia/muses"/-->
+<!--img src="https://img.shields.io/node/v/muses-mixer"/-->
+<img src="https://img.shields.io/badge/Typescript->=4.5.4-blue"/>
+<img src="https://packagephobia.com/badge?p=muses-mixer"/>
+<img src="https://badge.fury.io/js/muses-mixer.svg"/>
+<img src="https://img.shields.io/npm/dm/muses-mixer"/>
+<img src="https://img.shields.io/librariesio/release/npm/muses-mixer"/>
+<!--img src="https://img.shields.io/librariesio/dependent-repos/npm/muses-mixer"/-->
 <!--img src="https://img.shields.io/github/last-commit/corpsemedia/muses"/-->
 </p>
 
@@ -58,7 +58,7 @@ This package was designed to be supported in different frameworks (like [Webpack
 ### CDN
 
 ```html
-<script src="//unpkg.com/@corpsemedia/muses/dist/muses.min.js"></script>
+<script src="//unpkg.com/muses-mixer/dist/muses.min.js"></script>
 ```
 
 You can also download the full library from the [GitHub Repository](https://github.com/corpsemedia/muses/tree/main/dist) and then import it with the `<script>` tag in your project.
@@ -66,13 +66,13 @@ You can also download the full library from the [GitHub Repository](https://gith
 ### NPM
 
 ```sh
-npm install --save @corpsemedia/muses
+npm install --save muses-mixer
 ```
 
 ### YARN
 
 ```sh
-yarn add @corpsemedia/muses
+yarn add muses-mixer
 ```
 
 ***
@@ -103,7 +103,7 @@ const track2 = channel.input( "./my-file.mp3" ) ;
 ### Module Import
 
 ```javascript
-import { AudioMixer, createAudioMixer } from "@corpsemedia/muses" ;
+import { AudioMixer, createAudioMixer } from "muses-mixer" ;
 
 const mixer = new AudioMixer( ) ;
 // or

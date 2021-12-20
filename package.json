@@ -1,5 +1,5 @@
 {
-  "name": "@corpsemedia/muses",
+  "name": "muses-mixer",
   "version": "0.2.4",
   "description": "🎛️ JavaScript Audio Mixing Console Module 🔊",
   "main": "lib/index.js",
