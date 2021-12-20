@@ -1,4 +1,4 @@
-<h1 align="center">Muses</h1>
+<h1 align="center">Muses - Audio Mixing Module</h1>
 
 <p align="center">
 <img src="https://img.shields.io/badge/ES6-Supported-F7DF1E"/>
