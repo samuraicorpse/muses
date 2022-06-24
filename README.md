@@ -31,6 +31,7 @@ Create <b>audio mixers</b> to group your audio sources into channels with basic 
   * [Module Import](#module-import)
 - [Using Controllers](#using-controllers)
 - [Connecting A Microphone or Any Other StreamSource](#connecting-a-microphone-or-any-other-streamsource)
+- [Connecting *External Sounds*](#connecting-external-sounds)
 - [Adding Custom Effects and AudioNodes](#adding-custom-effects-and-audionodes)
   * [Manual Connection](#manual-connection)
   * [Using *Module-Solution*](#using-module-solution)
@@ -85,7 +86,7 @@ Due to the constant change in web security, in some browsers, it's necessary to 
 There are two solutions to prevent the problem:
 
 1. Don't create a [new mixer](#creating-an-audiomixer) automatically on page load.
-2. Call [.resumeContext()](https://samuraicorpse.github.io/muses/classes/AudioMixer.html#resumeContext) method before run any *play-like* function.
+2. Or, just call [.resumeContext()](https://samuraicorpse.github.io/muses/classes/AudioMixer.html#resumeContext) method before any *play-audio* function.
 
 **Note:** This problem is common in *Chromium*-based browsers. However, it is important to take into account that it is a problem that can occur in other environments such as applications created in *Electron* or mobile applications.
 
@@ -159,7 +160,7 @@ Remember, this module uses `AudioContext` to work, so is really easy to connect 
 
 ```javascript
 // Prepare our mixer and channels first.
-const mixer = muser.createAudioMixer( ) ;
+const mixer = muses.createAudioMixer( ) ;
 const channel = mixer.addChannel( "mic" ) ;
 
 // Now, let's request the microphone input with the getUserMedia API.
@@ -196,6 +197,35 @@ You can try this feature in the [Live Test](#live-test) example.
 
 ***
 
+## Connecting *External Sounds*
+
+Many *audio-related* packages use the same structure, creating *AudioNodes* from the *AudioContext* and making connections to get an output signal. So, if the package provide a audio-node connection method, you can just use **channel.inputNode** property as an input for that connection method.
+
+Let's see an example with [PizzicatoJS](https://www.npmjs.com/package/pizzicato) package.
+```javascript
+// First, import both pacakages (Muses and Pizzicato) only if you're using modules instead <script> tags in html.
+import { createAudioMixer } from "muses-mixer" ;
+import Pizzicato from "pizzicato" ;
+
+// Create a mixer and a channel.
+const mixer = muses.createAudioMixer( ) ;
+const channel = mixer.addChannel( "main-channel" ) ;
+
+// Create a sound from Pizzicato
+var sound = new Pizzicato.Sound( { 
+    source : 'file' ,
+    options: { path: './audio/sound.wav' }
+} , function( ) {
+    console.log('sound file loaded!');
+} ) ;
+
+// Finally, connect the previous sound to the channel.
+sound.connect( channel.inputNode ) ;
+
+```
+
+***
+
 ## Adding Custom Effects and AudioNodes
 
 It is very easy to add new effects and nodes to the channels of our mixer, you just need to understand the connection structure between the channel and the mixer itself.
@@ -212,6 +242,8 @@ It is very easy to add new effects and nodes to the channels of our mixer, you j
 ```
 
 As you can see, what is really important is the channel's `outputNode` and the mixer's `inputNode`. Just break the link between these two elements to introduce new `AudioNodes` between them.
+
+**Tip:** If you're looking for *basic-effects* like **delay**, **distortion**, **compressor**, etc. I recommend to use [PizzicatoJS](https://www.npmjs.com/package/pizzicato), then, just connect the sounds to the mixer just like [this](#connecting-external-sounds)
 
 ### Manual Connection
 
