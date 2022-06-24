@@ -8,7 +8,7 @@
     "test": "node test.mjs",
     "build": "npx tsc",
     "dist": "browserify src/index.ts -p [ tsify ] > dist/muses.js && npx minify ./dist/muses.js > ./dist/muses.min.js",
-    "toc" : "npx markdown-toc README.md" ,
+    "toc": "npx markdown-toc README.md",
     "docs": "npx typedoc src/index.ts --name \"Muses\" --readme ./README.md"
   },
   "repository": {

@@ -80,8 +80,22 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
             /** All channels added to the current AudioMixer instance */
             this.channels = [];
             this.ctx = audioContext || (0, audio_context_1.default)();
+            this.audioContext = this.ctx;
             this.inputNode = this.ctx.createGain();
             this.inputNode.connect(this.ctx.destination);
+        }
+        /**
+         * Due to the constant change in browser security, it is necessary to wait for the user to perform an action within the web page in order to execute the *AudioContext* correctly.
+         * If necessary, you can execute this method once the user executes the action in order to allow access to the *AudioContext*.
+         * Basically, this method verify and executes another funtion inside the *AudioContext* object, **AudioContext.resume()**.
+         * @see https://goo.gl/7K7WLu - For more details about auto-play policy.
+         * @returns {void}
+         */
+        resumeContext() {
+            if (this.audioContext.state !== "suspended") {
+                return;
+            }
+            this.audioContext.resume();
         }
         /**
          * Add a new channel in the current AudioMixer.

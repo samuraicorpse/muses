@@ -39,7 +39,7 @@ body {
       Load an audio file to add a new track, play it and change the controls of each channel.
     </p>
     <p>
-      <input id="upload" accept="audio/*" type="file">
+      <input @click="mixer.resumeContext()" id="upload" accept="audio/*" type="file">
     </p>
     <div class="columns">
       <div class="column">

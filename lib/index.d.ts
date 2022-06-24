@@ -7,6 +7,8 @@ declare global {
 export declare class AudioMixer {
     /** The audio-context instance used to process audio. */
     ctx: AudioContext;
+    /** The audio-context instance used to process audio (same as "ctx" property). */
+    audioContext: AudioContext;
     /** All channels added to the current AudioMixer instance */
     channels: AudioChannel[];
     /** The node to control the mixer output volume */
@@ -25,6 +27,14 @@ export declare class AudioMixer {
      * ```
      */
     constructor(audioContext?: AudioContext);
+    /**
+     * Due to the constant change in browser security, it is necessary to wait for the user to perform an action within the web page in order to execute the *AudioContext* correctly.
+     * If necessary, you can execute this method once the user executes the action in order to allow access to the *AudioContext*.
+     * Basically, this method verify and executes another funtion inside the *AudioContext* object, **AudioContext.resume()**.
+     * @see https://goo.gl/7K7WLu - For more details about auto-play policy.
+     * @returns {void}
+     */
+    resumeContext(): void;
     /**
      * Add a new channel in the current AudioMixer.
      * @param {String} [id] - (Default) The current channel index.

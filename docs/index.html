@@ -10,7 +10,7 @@
 <img src="https://img.shields.io/npm/dm/muses-mixer"/>
 <img src="https://img.shields.io/librariesio/release/npm/muses-mixer"/>
 <!--img src="https://img.shields.io/librariesio/dependent-repos/npm/muses-mixer"/-->
-<!--img src="https://img.shields.io/github/last-commit/corpsemedia/muses"/-->
+<!--img src="https://img.shields.io/github/last-commit/samuraicorpse/muses"/-->
 </p>
 
 <p align="center">
@@ -30,6 +30,7 @@ Create <b>audio mixers</b> to group your audio sources into channels with basic 
 <li><a href="#yarn">YARN</a></li>
 </ul>
 </li>
+<li><a href="#autoplay-policy">Autoplay Policy</a></li>
 <li><a href="#creating-an-audiomixer">Creating an AudioMixer</a><ul>
 <li><a href="#standard-javascript">Standard JavaScript</a></li>
 <li><a href="#module-import">Module Import</a></li>
@@ -56,7 +57,7 @@ Create <b>audio mixers</b> to group your audio sources into channels with basic 
 <a href="#live-test" id="live-test" style="color: inherit; text-decoration: none;">
   <h2>Live Test</h2>
 </a>
-<p>See <a href="https://rawcdn.githack.com/corpsemedia/muses/main/test.html">this basic example of usage</a> to test the module in your current browser by loading local files from your device and creating multiple channels.</p>
+<p>See <a href="https://rawcdn.githack.com/samuraicorpse/muses/main/test.html">this basic example of usage</a> to test the module in your current browser by loading local files from your device and creating multiple channels.</p>
 <hr>
 
 <a href="#installation" id="installation" style="color: inherit; text-decoration: none;">
@@ -69,7 +70,7 @@ Create <b>audio mixers</b> to group your audio sources into channels with basic 
 </a>
 <pre><code class="language-html"><span class="hl-8">&lt;</span><span class="hl-9">script</span><span class="hl-10"> </span><span class="hl-11">src</span><span class="hl-10">=</span><span class="hl-12">&quot;//unpkg.com/muses-mixer/dist/muses.min.js&quot;</span><span class="hl-8">&gt;&lt;/</span><span class="hl-9">script</span><span class="hl-8">&gt;</span>
 </code></pre>
-<p>You can also download the full library from the <a href="https://github.com/corpsemedia/muses/tree/main/dist">GitHub Repository</a> and then import it with the <code>&lt;script&gt;</code> tag in your project.</p>
+<p>You can also download the full library from the <a href="https://github.com/samuraicorpse/muses/tree/main/dist">GitHub Repository</a> and then import it with the <code>&lt;script&gt;</code> tag in your project.</p>
 
 <a href="#npm" id="npm" style="color: inherit; text-decoration: none;">
   <h3>NPM</h3>
@@ -82,6 +83,18 @@ Create <b>audio mixers</b> to group your audio sources into channels with basic 
 </a>
 <pre><code class="language-sh"><span class="hl-2">yarn add muses-mixer</span>
 </code></pre>
+<hr>
+
+<a href="#autoplay-policy" id="autoplay-policy" style="color: inherit; text-decoration: none;">
+  <h2>Autoplay Policy</h2>
+</a>
+<p>Due to the constant change in web security, in some browsers, it&#39;s necessary to wait for the user to perform an action within the website in order to execute the <em>AudioContext</em> correctly.</p>
+<p>There are two solutions to prevent the problem:</p>
+<ol>
+<li>Don&#39;t create a <a href="#creating-an-audiomixer">new mixer</a> automatically on page load.</li>
+<li>Call <a href="https://samuraicorpse.github.io/muses/classes/AudioMixer.html#resumeContext">.resumeContext()</a> method before run any <em>play-like</em> function.</li>
+</ol>
+<p><strong>Note:</strong> This problem is common in <em>Chromium</em>-based browsers. However, it is important to take into account that it is a problem that can occur in other environments such as applications created in <em>Electron</em> or mobile applications.</p>
 <hr>
 
 <a href="#creating-an-audiomixer" id="creating-an-audiomixer" style="color: inherit; text-decoration: none;">

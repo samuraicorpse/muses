@@ -10,7 +10,7 @@
 <img src="https://img.shields.io/npm/dm/muses-mixer"/>
 <img src="https://img.shields.io/librariesio/release/npm/muses-mixer"/>
 <!--img src="https://img.shields.io/librariesio/dependent-repos/npm/muses-mixer"/-->
-<!--img src="https://img.shields.io/github/last-commit/corpsemedia/muses"/-->
+<!--img src="https://img.shields.io/github/last-commit/samuraicorpse/muses"/-->
 </p>
 
 <p align="center">
@@ -25,6 +25,7 @@ Create <b>audio mixers</b> to group your audio sources into channels with basic 
   * [CDN](#cdn)
   * [NPM](#npm)
   * [YARN](#yarn)
+- [Autoplay Policy](#autoplay-policy)
 - [Creating an AudioMixer](#creating-an-audiomixer)
   * [Standard JavaScript](#standard-javascript)
   * [Module Import](#module-import)
@@ -47,7 +48,7 @@ Please see [this table](https://caniuse.com/?search=AudioContext) if you have an
 
 ## Live Test
 
-See [this basic example of usage](https://rawcdn.githack.com/corpsemedia/muses/main/test.html) to test the module in your current browser by loading local files from your device and creating multiple channels.
+See [this basic example of usage](https://rawcdn.githack.com/samuraicorpse/muses/main/test.html) to test the module in your current browser by loading local files from your device and creating multiple channels.
 
 ***
 
@@ -61,7 +62,7 @@ This package was designed to be supported in different frameworks (like [Webpack
 <script src="//unpkg.com/muses-mixer/dist/muses.min.js"></script>
 ```
 
-You can also download the full library from the [GitHub Repository](https://github.com/corpsemedia/muses/tree/main/dist) and then import it with the `<script>` tag in your project.
+You can also download the full library from the [GitHub Repository](https://github.com/samuraicorpse/muses/tree/main/dist) and then import it with the `<script>` tag in your project.
 
 ### NPM
 
@@ -74,6 +75,19 @@ npm install --save muses-mixer
 ```sh
 yarn add muses-mixer
 ```
+
+***
+
+## Autoplay Policy
+
+Due to the constant change in web security, in some browsers, it's necessary to wait for the user to perform an action within the website in order to execute the *AudioContext* correctly.
+
+There are two solutions to prevent the problem:
+
+1. Don't create a [new mixer](#creating-an-audiomixer) automatically on page load.
+2. Call [.resumeContext()](https://samuraicorpse.github.io/muses/classes/AudioMixer.html#resumeContext) method before run any *play-like* function.
+
+**Note:** This problem is common in *Chromium*-based browsers. However, it is important to take into account that it is a problem that can occur in other environments such as applications created in *Electron* or mobile applications.
 
 ***
 
