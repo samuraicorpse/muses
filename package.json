@@ -1,6 +1,6 @@
 {
   "name": "muses-mixer",
-  "version": "0.2.4",
+  "version": "0.2.6",
   "description": "🎛️ JavaScript Audio Mixing Console Module 🔊",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
