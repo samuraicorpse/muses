@@ -235,4 +235,4 @@ channel.removeAllNodes( ) ;
 
 ## Documentation
 
-To see the full documentation *(all classes, properties and methods)*, please visit the [official website](https://corpsemedia.github.io/muses).
+To see the full documentation *(all classes, properties and methods)*, please visit the [official website](https://samuraicorpse.github.io/muses).
